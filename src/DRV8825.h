@@ -9,7 +9,7 @@
  */
 #ifndef DRV8825_H
 #define DRV8825_H
-#include <Arduino.h>
+#include <mbed.h>
 #include "A4988.h"
 
 class DRV8825 : public A4988 {
@@ -35,9 +35,9 @@ private:
     static const short MAX_MICROSTEP = 32;
 
 public:
-    DRV8825(short steps, short dir_pin, short step_pin);
-    DRV8825(short steps, short dir_pin, short step_pin, short enable_pin);
-    DRV8825(short steps, short dir_pin, short step_pin, short mode0_pin, short mode1_pin, short mode2_pin);
-    DRV8825(short steps, short dir_pin, short step_pin, short enable_pin, short mode0_pin, short mode1_pin, short mode2_pin);
+    DRV8825(short steps, PinName dir_pin, PinName step_pin);
+    DRV8825(short steps, PinName dir_pin, PinName step_pin, PinName enable_pin);
+    DRV8825(short steps, PinName dir_pin, PinName step_pin, PinName mode0_pin, PinName mode1_pin, PinName mode2_pin);
+    DRV8825(short steps, PinName dir_pin, PinName step_pin, PinName enable_pin, PinName mode0_pin, PinName mode1_pin, PinName mode2_pin);
 };
 #endif // DRV8825_H

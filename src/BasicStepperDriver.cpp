@@ -17,13 +17,8 @@
  * Basic connection: only DIR, STEP are connected.
  * Microstepping controls should be hardwired.
  */
-BasicStepperDriver::BasicStepperDriver(short steps, short dir_pin, short step_pin)
-:BasicStepperDriver(steps, dir_pin, step_pin, PIN_UNCONNECTED)
-{
-}
 
-BasicStepperDriver::BasicStepperDriver(short steps, short dir_pin, short step_pin, short enable_pin)
-:motor_steps(steps), dir_pin(dir_pin), step_pin(step_pin), enable_pin(enable_pin)
+BasicStepperDriver::BasicStepperDriver(short steps, PinName dir_pin, PinName step_pin, PinName enable_pin) : motor_steps(steps), dir_pin(dir_pin), step_pin(step_pin), enable_pin(enable_pin)
 {
 	steps_to_cruise = 0;
 	steps_remaining = 0;
@@ -33,20 +28,37 @@ BasicStepperDriver::BasicStepperDriver(short steps, short dir_pin, short step_pi
     cruise_step_pulse = 0;
 	rest = 0;
 	step_count = 0;
+    enable_pin_enabled = true;
 }
+
+BasicStepperDriver::BasicStepperDriver(short steps, PinName dir_pin, PinName step_pin) : motor_steps(steps), dir_pin(dir_pin), step_pin(step_pin) , enable_pin(NC)
+{
+    steps_to_cruise = 0;
+	steps_remaining = 0;
+	dir_state = 0;
+	steps_to_brake = 0;
+	step_pulse = 0;
+    cruise_step_pulse = 0;
+	rest = 0;
+	step_count = 0;
+    enable_pin_enabled = false;
+}
+
 
 /*
  * Initialize pins, calculate timings etc
  */
 void BasicStepperDriver::begin(float rpm, short microsteps){
-    pinMode(dir_pin, OUTPUT);
-    digitalWrite(dir_pin, HIGH);
+    //pinMode(dir_pin, OUTPUT);
+    //digitalWrite(dir_pin, HIGH);
+    dir_pin = HIGH;
 
-    pinMode(step_pin, OUTPUT);
-    digitalWrite(step_pin, LOW);
+    //pinMode(step_pin, OUTPUT);
+    //digitalWrite(step_pin, LOW);
+    step_pin = LOW;
 
-    if IS_CONNECTED(enable_pin){
-        pinMode(enable_pin, OUTPUT);
+    if (enable_pin_enabled == true){
+        //pinMode(enable_pin, OUTPUT);
         disable();
     }
 
@@ -297,14 +309,17 @@ long BasicStepperDriver::nextAction(void){
         /*
          * DIR pin is sampled on rising STEP edge, so it is set first
          */
-        digitalWrite(dir_pin, dir_state);
-        digitalWrite(step_pin, HIGH);
+        //digitalWrite(dir_pin, dir_state);
+        dir_pin = dir_state;
+        //digitalWrite(step_pin, HIGH);
+        step_pin = HIGH;
         unsigned m = micros();
         unsigned long pulse = step_pulse; // save value because calcStepPulse() will overwrite it
         calcStepPulse();
         // We should pull HIGH for at least 1-2us (step_high_min)
         delayMicros(step_high_min);
-        digitalWrite(step_pin, LOW);
+        //digitalWrite(step_pin, LOW);
+        step_pin = LOW;
         // account for calcStepPulse() execution time; sets ceiling for max rpm on slower MCUs
         last_action_end = micros();
         m = last_action_end - m;
@@ -343,15 +358,18 @@ void BasicStepperDriver::setEnableActiveState(short state){
  * Enable/Disable the motor by setting a digital flag
  */
 void BasicStepperDriver::enable(void){
-    if IS_CONNECTED(enable_pin){
-        digitalWrite(enable_pin, enable_active_state);
+    if (enable_pin_enabled == true){
+        //digitalWrite(enable_pin, enable_active_state);
+        enable_pin = enable_active_state;
     };
     delayMicros(2);
 }
 
 void BasicStepperDriver::disable(void){
-    if IS_CONNECTED(enable_pin){
-        digitalWrite(enable_pin, (enable_active_state == HIGH) ? LOW : HIGH);
+    //if IS_CONNECTED(enable_pin){
+    if(enable_pin_enabled == true){
+        //digitalWrite(enable_pin, (enable_active_state == HIGH) ? LOW : HIGH);
+        enable_pin = (enable_active_state == HIGH) ? LOW : HIGH;
     }
 }
 

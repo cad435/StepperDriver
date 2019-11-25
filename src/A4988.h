@@ -9,15 +9,15 @@
  */
 #ifndef A4988_H
 #define A4988_H
-#include <Arduino.h>
+#include <mbed.h>
 #include "BasicStepperDriver.h"
 
 class A4988 : public BasicStepperDriver {
 protected:
     static const uint8_t MS_TABLE[];
-    short ms1_pin = PIN_UNCONNECTED;
-    short ms2_pin = PIN_UNCONNECTED;
-    short ms3_pin = PIN_UNCONNECTED;
+    DigitalOut ms1_pin = PIN_UNCONNECTED;
+    DigitalOut ms2_pin = PIN_UNCONNECTED;
+    DigitalOut ms3_pin = PIN_UNCONNECTED;
     // tA STEP minimum, HIGH pulse width (1us)
     static const int step_high_min = 1;
     // tB STEP minimum, LOW pulse width (1us)
@@ -42,15 +42,15 @@ public:
      * Basic connection: only DIR, STEP are connected.
      * Microstepping controls should be hardwired.
      */
-    A4988(short steps, short dir_pin, short step_pin);
-    A4988(short steps, short dir_pin, short step_pin, short enable_pin);
+    A4988(short steps, PinName dir_pin, PinName step_pin);
+    A4988(short steps, PinName dir_pin, PinName step_pin, PinName enable_pin);
     
     void begin(short rpm=60, short microsteps=1);
     /*
      * Fully wired. All the necessary control pins for A4988 are connected.
      */
-    A4988(short steps, short dir_pin, short step_pin, short ms1_pin, short ms2_pin, short ms3_pin);
-    A4988(short steps, short dir_pin, short step_pin, short enable_pin, short ms1_pin, short ms2_pin, short ms3_pin);
+    A4988(short steps, PinName dir_pin, PinName step_pin, PinName ms1_pin, PinName ms2_pin, PinName ms3_pin);
+    A4988(short steps, PinName dir_pin, PinName step_pin, PinName enable_pin, PinName ms1_pin, PinName ms2_pin, PinName ms3_pin);
     short setMicrostep(short microsteps) override;
 };
 #endif // A4988_H

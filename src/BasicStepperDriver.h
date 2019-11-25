@@ -9,11 +9,16 @@
  */
 #ifndef STEPPER_DRIVER_BASE_H
 #define STEPPER_DRIVER_BASE_H
-#include <Arduino.h>
+#include <mbed.h>
+
+#define HIGH 1
+#define LOW 0
+#define micros() us_ticker_read()
+
 
 // used internally by the library to mark unconnected pins
-#define PIN_UNCONNECTED -1
-#define IS_CONNECTED(pin) (pin != PIN_UNCONNECTED)
+#define PIN_UNCONNECTED NC
+#define IS_CONNECTED(pin) (pin != 0)
 
 /*
  * calculate the step pulse in microseconds for a given rpm value.
@@ -30,6 +35,11 @@
  */
 class BasicStepperDriver {
 public:
+
+    //Standardconsturctor
+    BasicStepperDriver(short steps, PinName dir_pin, PinName step_pin);
+    BasicStepperDriver(short steps, PinName dir_pin, PinName step_pin, PinName enable_pin);
+
     enum Mode {CONSTANT_SPEED, LINEAR_SPEED};
     enum State {STOPPED, ACCELERATING, CRUISING, DECELERATING};
     struct Profile {
@@ -38,16 +48,25 @@ public:
         short decel = 1000;     // deceleration [steps/s^2]    
     };
     static inline void delayMicros(unsigned long delay_us, unsigned long start_us = 0){
-        if (delay_us){
+       
+       unsigned long delta = delay_us - start_us;
+
+       wait_us(delta);
+        
+        /*if (delay_us){
             if (!start_us){
                 start_us = micros();
             }
             if (delay_us > MIN_YIELD_MICROS){
-                yield();
+                #if MBED_CONF_RTOS_PRESENT
+                    osThreadYield();
+                #else
+                    asm("yield");
+                #endif
             }
             // See https://www.gammon.com.au/millis
             while (micros() - start_us < delay_us);
-        }
+        }*/
     }
 
 private:
@@ -65,9 +84,10 @@ protected:
     /*
      * Driver Configuration
      */
-    short dir_pin;
-    short step_pin;
-    short enable_pin = PIN_UNCONNECTED;
+    DigitalOut dir_pin;
+    DigitalOut step_pin;
+    DigitalOut enable_pin;
+    bool enable_pin_enabled = false;
     short enable_active_state = HIGH;
     // Get max microsteps supported by the device
     virtual short getMaxMicrostep();
