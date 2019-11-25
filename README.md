@@ -1,6 +1,13 @@
 Fork of laurb9's Stepper Driver Library, converted to use with mbedOS
 =============
 
+<b>DRV8834 & DRV8880 currently not supported! </b></br>
+Original readme below:
+
+</br>
+</hline>
+</br>
+
 [![arduino-library-badge](https://www.ardu-badge.com/badge/StepperDriver.svg?)](https://www.ardu-badge.com/StepperDriver)
 [![Build Status](https://travis-ci.com/laurb9/StepperDriver.svg?branch=master)](https://travis-ci.com/laurb9/StepperDriver)
 
