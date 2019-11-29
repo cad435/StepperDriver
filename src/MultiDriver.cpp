@@ -34,7 +34,7 @@ void MultiDriver::startMove(long steps1, long steps2, long steps3){
  * Trigger next step action
  */
 long MultiDriver::nextAction(void){
-    Motor::delayMicros(next_action_interval, last_action_end);
+    Motor::delayMicros(next_action_interval);//, last_action_end);
 
     // TODO: unroll these loops
     // Trigger all the motors that need it

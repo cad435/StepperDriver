@@ -47,11 +47,11 @@ public:
         short accel = 1000;     // acceleration [steps/s^2]
         short decel = 1000;     // deceleration [steps/s^2]    
     };
-    static inline void delayMicros(unsigned long delay_us, unsigned long start_us = 0){
+    static inline void delayMicros(unsigned long delay_us){//, unsigned long start_us = 0){
        
-       unsigned long delta = delay_us - start_us;
+       //unsigned long delta = delay_us - start_us;
 
-       wait_us(delta);
+       wait_us(delay_us);
         
         /*if (delay_us){
             if (!start_us){

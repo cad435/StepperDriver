@@ -305,7 +305,7 @@ void BasicStepperDriver::calcStepPulse(void){
  */
 long BasicStepperDriver::nextAction(void){
     if (steps_remaining > 0){
-        delayMicros(next_action_interval, last_action_end);
+        delayMicros(next_action_interval);//, last_action_end);
         /*
          * DIR pin is sampled on rising STEP edge, so it is set first
          */
